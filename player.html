@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Alexandria Player</title>
+    </head>
+    <body>
+        <script>
+           // You can also require other files to run in this process
+            require('./dist/player_renderer.js')
+        </script>
+        <button onclick="playPause()">Play/Pause</button> 
+        <video id="video_player">
+            <source src="https://www.html5rocks.com/en/tutorials/track/basics/treeOfLife/video/developerStories-en.webm" type="video/mp4" />
+        </video>
+    </body>
+</html>

@@ -1,0 +1,1 @@
+export let screenResolution: { width: number; height: number } = { width: 0, height: 0 };

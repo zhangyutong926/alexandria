@@ -19,6 +19,11 @@
     "@types/node": "^11.10.5",
     "electron": "^4.0.7",
     "tslint": "^5.10.0",
-    "typescript": "^2.8.3"
+    "typescript": "^2.8.3",
+    "electron-settings": "^3.2.0"
+  },
+  "dependencies": {
+    "@types/electron-settings": "^3.1.1",
+    "electron-settings": "^3.2.0"
   }
 }

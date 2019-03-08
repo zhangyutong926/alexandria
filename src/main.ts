@@ -1,51 +1,36 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import * as path from "path";
+import settings = require("electron-settings");
 
-let mainWindow: Electron.BrowserWindow;
+// TODO More screen resolutions
+const defaultResolution = { width: 1366, height: 768 };
+const screenResolution = {
+    width: (<any>settings.get("graphics.resolution", defaultResolution))["width"] as number,
+    height: (<any>settings.get("graphics.resolution", defaultResolution))["height"] as number
+};
 
-function createWindow() {
-  // Create the browser window.
-  mainWindow = new BrowserWindow({
-    height: 600,
-    width: 800,
-  });
+let playerWindow: Electron.BrowserWindow;
 
-  // and load the index.html of the app.
-  mainWindow.loadFile(path.join(__dirname, "../index.html"));
+app.on("ready", () => {
+    console.log(settings.file());
+  
+    playerWindow = new BrowserWindow({
+        frame: settings.get("graphics.frame", false) as boolean,
+        width: screenResolution.width,
+        height: screenResolution.height,
+    });
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+    playerWindow.loadFile(path.join(__dirname, "../player.html"));
 
-  // Emitted when the window is closed.
-  mainWindow.on("closed", () => {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null;
-  });
-}
+    ipcMain.on("request-screen-resolution", (event: any, args: any) => {
+        event.returnValue = screenResolution;
+    });
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on("ready", createWindow);
+    playerWindow.on("closed", () => {
+        playerWindow = null;
+    });
+});
 
-// Quit when all windows are closed.
 app.on("window-all-closed", () => {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== "darwin") {
     app.quit();
-  }
 });
-
-app.on("activate", () => {
-  // On OS X it"s common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
-    createWindow();
-  }
-});
-
-// In this file you can include the rest of your app"s specific main process
-// code. You can also put them in separate files and require them here.
