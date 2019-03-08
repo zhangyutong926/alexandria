@@ -1,0 +1,24 @@
+{
+  "name": "alexandria",
+  "version": "1.0.0",
+  "description": "A interactive-movie game engine",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "start": "npm run build && electron ./dist/main.js"
+  },
+  "repository": "https://github.com/zhangyutong926/alexandria",
+  "keywords": [
+    "interactive movie",
+    "game engine"
+  ],
+  "author": "Sayako Hoshimiya",
+  "license": "GPL",
+  "devDependencies": {
+    "@types/node": "^11.10.5",
+    "electron": "^4.0.7",
+    "tslint": "^5.10.0",
+    "typescript": "^2.8.3"
+  }
+}
