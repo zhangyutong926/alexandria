@@ -5,13 +5,13 @@ import fs = require('fs');
 const gamedataPath = path.join(__dirname, "../gamedata.json");
 
 let obj = JSON.parse(fs.readFileSync(gamedataPath, "utf8")) as any;
-const gameName : string = obj.gameName;
-const homePageImage : string = obj.homePageImage;
-const enableSaving : boolean = obj.enableSaving;
-const entranceId : string = obj.entranceId;
+const gameName: string = obj.gameName;
+const homePageImage: string = obj.homePageImage;
+const enableSaving: boolean = obj.enableSaving;
+const entranceId: string = obj.entranceId;
 class Option {
     text: string;
-    jumpToId: string;    
+    jumpToId: string;
 }
 class Scene {
     video: string;
@@ -35,14 +35,4 @@ for (const key in obj.gameContent) {
 }
 
 const videoPlayer = document.getElementById("video_player") as HTMLVideoElement;
-const screenResolution = ipcRenderer.sendSync("request-screen-resolution") as { width: number; height: number };
-videoPlayer.setAttribute("style", `top: 0; left: 0; width: 100%; height: 95%;`);
 
-videoPlayer.play();
-
-function playPause() {
-    if (videoPlayer.paused) 
-        videoPlayer.play(); 
-    else 
-        videoPlayer.pause(); 
-}

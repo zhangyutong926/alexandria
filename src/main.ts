@@ -2,6 +2,8 @@ import { app, BrowserWindow, ipcMain } from "electron";
 import * as path from "path";
 import settings = require("electron-settings");
 
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
+
 // TODO More screen resolutions
 const defaultResolution = { width: 1366, height: 768 };
 const screenResolution = {

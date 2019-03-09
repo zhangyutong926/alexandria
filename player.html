@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Alexandria Player</title>
-    </head>
-    <body>
-        <script>
-           // You can also require other files to run in this process
-            require('./dist/player_renderer.js')
-        </script>
-        <button onclick="playPause()">Play/Pause</button> 
-        <video id="video_player">
-            <source src="https://www.html5rocks.com/en/tutorials/track/basics/treeOfLife/video/developerStories-en.webm" type="video/mp4" />
-        </video>
-    </body>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Alexandria Player</title>
+</head>
+
+<body>
+    <img id="image_display" style="top: 0; left: 0; width: 100%;" src="./res/bayer.jpg"></img>
+    <video id="video_player" style="top: 0; left: 0; width: 100%;" hidden></video>
+    <script>
+        // You can also require other files to run in this process
+        require('./dist/player_renderer.js')
+    </script>
+</body>
+
 </html>
