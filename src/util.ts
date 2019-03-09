@@ -1,1 +1,5 @@
-export let screenResolution: { width: number; height: number } = { width: 0, height: 0 };
+class ScreenResolution {
+    width: number;
+    height: number;
+}
+export let screenResolution: ScreenResolution;

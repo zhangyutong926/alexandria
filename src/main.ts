@@ -13,21 +13,27 @@ const screenResolution = {
 
 let playerWindow: Electron.BrowserWindow;
 
+ipcMain.on("log", (event: any, args: any) => {
+    console.log(args);
+});
+ipcMain.on("is-debug-mode", (event: any, args: any) => {
+    event.returnValue = settings.get("developer.debugMode", false) as boolean;
+});
+ipcMain.on("get-screen-resolution", (event: any, args: any) => {
+    event.returnValue = screenResolution;
+});
+
+console.log("Settings file path: " + settings.file().trim());
+
 app.on("ready", () => {
-    console.log(settings.file());
-  
     playerWindow = new BrowserWindow({
         frame: settings.get("graphics.frame", false) as boolean,
         width: screenResolution.width,
         height: screenResolution.height,
+        useContentSize: true
     });
-
+    playerWindow.setResizable(false);
     playerWindow.loadFile(path.join(__dirname, "../player.html"));
-
-    ipcMain.on("request-screen-resolution", (event: any, args: any) => {
-        event.returnValue = screenResolution;
-    });
-
     playerWindow.on("closed", () => {
         playerWindow = null;
     });
