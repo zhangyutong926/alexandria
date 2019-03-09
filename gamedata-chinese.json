@@ -1,6 +1,6 @@
 {
-    "gameName": "TransTrans",
-    "homePageImage": "homePage.png",
+    "gameName": "Alexandria",
+    "homePageImage": "homePage.jpg",
     "enableSaving": true,
     "entranceId": "scene1",
     "gameContent": {

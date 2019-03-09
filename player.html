@@ -14,12 +14,98 @@
         ::-webkit-scrollbar {
             display: none;
         }
+
+        .control-container {
+            bottom: 0;
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.5);
+            text-align: center;
+            width: 100%;
+        }
+
+        .options-container {
+            overflow-x: scroll;
+            overflow-y: hidden;
+            white-space: nowrap;
+        }
+
+        .option {
+            display: inline-block;
+            margin: 20px;
+            margin-left: 50px;
+            margin-right: 50px;
+            padding: 10px;
+            color: white;
+            opacity: 1;
+        }
+
+        .option-text {
+            cursor: pointer;
+            user-select: none;
+        }
     </style>
 </head>
 
 <body>
-    <img id="image_display" style="top: 0; left: 0; width: 100%; height: 100%" hidden>
-    <video id="video_player" style="top: 0; left: 0; width: 100%; height: 100%"></video>
+
+    <div style="top: 0; left: 0; width: 100%; height: 100%">
+        <div>
+            <img id="image_display" style="top: 0; left: 0; width: 100%; height: 100%" hidden>
+            <video id="video_player" style="top: 0; left: 0; width: 100%; height: 100%"></video>
+        </div>
+        <div id="control_container" class="control-container">
+            <div style="padding-bottom: 10px;">
+                <img id="scroll_left" src="res/scroll_left.png"
+                    style="position: absolute; left: 0; width: 50px; height: auto; cursor: pointer;">
+                <img id="scroll_right" src="res/scroll_right.png"
+                    style="position: absolute; right: 0; width: 50px; height: auto; cursor: pointer;">
+                <center>
+                    <h2 id="countdown" style="color: white;"></h2>
+                </center>
+            </div>
+            <div id="options_container" class="options-container">
+                <div class="option">
+                    <h2 class="option-text">asdfasdfasfasdfafadfasfafda</h2>
+                </div>
+                <div class="option">
+                    <h2 class="option-text">Card</h2>
+                </div>
+                <div class="option">
+                    <h2 class="option-text">asdfsfsafafdfs</h2>
+                </div>
+                <div class="option">
+                    <h2 class="option-text">Card</h2>
+                </div>
+                <div class="option">
+                    <h2 class="option-text">Card</h2>
+                </div>
+                <div class="option">
+                    <h2 class="option-text">Card</h2>
+                </div>
+                <div class="option">
+                    <h2 class="option-text">Card</h2>
+                </div>
+                <div class="option">
+                    <h2 class="option-text">Card</h2>
+                </div>
+                <div class="option">
+                    <h2 class="option-text">Card</h2>
+                </div>
+                <div class="option">
+                    <h2 class="option-text">Card</h2>
+                </div>
+                <div class="option">
+                    <h2 class="option-text">Card</h2>
+                </div>
+                <div class="option">
+                    <h2 class="option-text">Card</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
     <script>
         // You can also require other files to run in this process
         require('./dist/player_renderer.js')

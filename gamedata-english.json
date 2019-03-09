@@ -1,0 +1,35 @@
+{
+    "gameName": "Alexandria",
+    "homePageImage": "homePage.jpg",
+    "enableSaving": true,
+    "entranceId": "scene1",
+    "gameContent": {
+        "scene1": {
+            "video": "video1.mp4",
+            "options": [
+                { "text": "Option 1-1", "jumpToId": "scene2" },
+                { "text": "Option 1-2", "jumpToId": "scene3" }
+            ],
+            "defaultOption": 0,
+            "choosingTime": -1
+        },
+        "scene2": {
+            "video": "video2.mp4",
+            "options": [
+                { "text": "Option 2-1 (Ending)", "jumpToId": "" },
+                { "text": "Option 2-2", "jumpToId": "scene3" }
+            ],
+            "defaultOption": 0,
+            "choosingTime": 10
+        },
+        "scene3": {
+            "video": "video3.mp4",
+            "options": [
+                { "text": "Option 3-1 (Ending)", "jumpToId": "" },
+                { "text": "Option 3-2 (Ending)", "jumpToId": "" }
+            ],
+            "defaultOption": 0,
+            "choosingTime": -1
+        }
+    }
+}
