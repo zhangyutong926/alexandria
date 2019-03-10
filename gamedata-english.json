@@ -11,7 +11,7 @@
                 { "text": "Option 1-2 (Ending)", "jumpToId": "" }
             ],
             "defaultOption": 0,
-            "choosingTime": 2
+            "choosingTime": -1
         },
         "scene2": {
             "video": "video2.mp4",

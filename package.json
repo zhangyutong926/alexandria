@@ -2,6 +2,7 @@
   "name": "alexandria",
   "version": "1.0.0",
   "description": "A interactive-movie game engine",
+  "main": "dist/main.js",
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",

@@ -90,13 +90,25 @@ function displayScene(sceneId: string, time: number = 0) {
     controlContainer.hidden = true;
     imageDisplay.hidden = true;
     videoPlayer.hidden = false;
-    
+
     const scene = gameContent[sceneId];
+    console.log(sceneId);
     videoPlayer.src = "./res/" + scene.video;
     videoPlayer.currentTime = time;
     let next: string;
+    let chosen: boolean = false;
     const callback = (jumpToId: string) => {
-        next = jumpToId;
+        console.log(videoPlayer.ended);
+        if (videoPlayer.ended) {
+            if (next != "") {
+                displayScene(jumpToId);
+            } else {
+                displayMainMenu();
+            }
+        } else {
+            next = jumpToId;
+            chosen = true;
+        }
     };
     if (scene.choosingTime == -1) {
         displayOptions(scene, callback);
@@ -117,10 +129,12 @@ function displayScene(sceneId: string, time: number = 0) {
         }
     };
     videoPlayer.onended = () => {
-        if (next != "") {
-            displayScene(next);
-        } else {
-            displayMainMenu();
+        if (chosen) {
+            if (next != "") {
+                displayScene(next);
+            } else {
+                displayMainMenu();
+            }
         }
     };
 }
@@ -140,7 +154,7 @@ function displayOptions(scene: Scene, callback: (jumpToId: string) => any) {
     while (optionsContainer.hasChildNodes()) {
         optionsContainer.removeChild(optionsContainer.lastChild);
     }
-    let interval:NodeJS.Timeout;
+    let interval: NodeJS.Timeout;
     for (const option of scene.options) {
         const h2Node = document.createElement("h2");
         h2Node.setAttribute("class", "option-text");
