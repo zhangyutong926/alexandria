@@ -8,10 +8,10 @@
             "video": "video1.mp4",
             "options": [
                 { "text": "Option 1-1", "jumpToId": "scene2" },
-                { "text": "Option 1-2", "jumpToId": "scene3" }
+                { "text": "Option 1-2 (Ending)", "jumpToId": "" }
             ],
             "defaultOption": 0,
-            "choosingTime": -1
+            "choosingTime": 2
         },
         "scene2": {
             "video": "video2.mp4",

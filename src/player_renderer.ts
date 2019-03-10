@@ -7,17 +7,6 @@ function log(a: any) {
 }
 const playerWindow: Electron.BrowserWindow = remote.getCurrentWindow();
 const gameConfig = ipcRenderer.sendSync("get-game-config");
-window.addEventListener("keyup", (e: KeyboardEvent) => {
-    switch (e.key) {
-        case "F12":
-        case "f12": {
-            if (gameConfig.isDebugMode) {
-                playerWindow.webContents.openDevTools();
-            }
-            break;
-        }
-    }
-});
 
 const gamedataPath = path.join(__dirname, `../gamedata-${gameConfig.gameLanguage}.json`);
 let obj = JSON.parse(fs.readFileSync(gamedataPath, "utf8")) as any;
@@ -39,7 +28,7 @@ const gameContent: { [id: string]: Scene; } = {};
 for (const key in obj.gameContent) {
     gameContent[key] = {
         video: obj.gameContent[key].video,
-        options: obj.gameContent[key].options.forEach((element: any) => {
+        options: obj.gameContent[key].options.map((element: any) => {
             return {
                 text: element.text,
                 jumpToId: element.jumpToId
@@ -50,70 +39,138 @@ for (const key in obj.gameContent) {
     }
 }
 
+let inMainMenu: boolean;
+window.onkeyup = (e: KeyboardEvent) => {
+    switch (e.key) {
+        case "F12":
+        case "f12": {
+            if (gameConfig.isDebugMode) {
+                playerWindow.webContents.openDevTools();
+            }
+            break;
+        }
+        case "Enter":
+        case "enter": {
+            if (inMainMenu) {
+                displayScene(entranceId);
+            }
+            break;
+        }
+    }
+};
+
 const videoPlayer = document.getElementById("video_player") as HTMLVideoElement;
 const imageDisplay = document.getElementById("image_display") as HTMLImageElement;
 const controlContainer = document.getElementById("control_container");
 const optionsContainer = document.getElementById("options_container");
 const countdown = document.getElementById("countdown");
-document.getElementById("scroll_left").addEventListener("click", () => {
+const optionsScrollLeft = document.getElementById("options_scroll_left");
+const optionsScrollRight = document.getElementById("options_scroll_right");
+const pressEnter = document.getElementById("press_enter");
+optionsScrollLeft.onclick = () => {
     optionsContainer.scrollLeft -= 50;
-});
-document.getElementById("scroll_right").addEventListener("click", () => {
+};
+optionsScrollRight.onclick = () => {
     optionsContainer.scrollLeft += 50;
-});
+};
 
 function displayMainMenu() {
-
+    inMainMenu = true;
+    videoPlayer.pause();
+    videoPlayer.hidden = true;
+    controlContainer.hidden = true;
+    imageDisplay.hidden = false;
+    imageDisplay.src = "./res/" + homePageImage;
+    pressEnter.hidden = false;
 }
 
 function displayScene(sceneId: string, time: number = 0) {
+    inMainMenu = false;
+    pressEnter.hidden = true;
+    controlContainer.hidden = true;
+    imageDisplay.hidden = true;
+    videoPlayer.hidden = false;
+    
+    const scene = gameContent[sceneId];
+    videoPlayer.src = "./res/" + scene.video;
+    videoPlayer.currentTime = time;
+    let next: string;
+    const callback = (jumpToId: string) => {
+        next = jumpToId;
+    };
+    if (scene.choosingTime == -1) {
+        displayOptions(scene, callback);
+    } else {
+        let displayingOptions = false;
+        videoPlayer.ontimeupdate = () => {
+            console.log(videoPlayer.currentTime + videoPlayer.duration - scene.choosingTime);
+            if (!displayingOptions && videoPlayer.currentTime >= videoPlayer.duration - scene.choosingTime) {
+                displayOptions(scene, callback);
+                displayingOptions = true;
+            }
+        };
+    }
+    videoPlayer.onloadedmetadata = () => {
+        console.log(time + " " + videoPlayer.duration);
+        if (time < videoPlayer.duration) {
+            videoPlayer.play();
+        }
+    };
+    videoPlayer.onended = () => {
+        if (next != "") {
+            displayScene(next);
+        } else {
+            displayMainMenu();
+        }
+    };
+}
 
+function checkOverflow(el: HTMLElement) {
+    const curOverflow = el.style.overflow;
+    if (!curOverflow || curOverflow === "visible")
+        el.style.overflow = "hidden";
+    const isOverflowing = el.clientWidth < el.scrollWidth
+        || el.clientHeight < el.scrollHeight;
+    el.style.overflow = curOverflow;
+    return isOverflowing;
 }
 
 function displayOptions(scene: Scene, callback: (jumpToId: string) => any) {
-    controlContainer.removeAttribute("hidden");
+    controlContainer.hidden = false;
     while (optionsContainer.hasChildNodes()) {
         optionsContainer.removeChild(optionsContainer.lastChild);
     }
+    let interval:NodeJS.Timeout;
     for (const option of scene.options) {
         const h2Node = document.createElement("h2");
         h2Node.setAttribute("class", "option-text");
-        h2Node.addEventListener("click", () => {
-            controlContainer.setAttribute("hidden", "");
+        h2Node.onclick = () => {
+            clearInterval(interval);
+            controlContainer.hidden = true;
             callback(option.jumpToId);
-        });
+        };
         h2Node.innerHTML = option.text;
         const divNode = document.createElement("div");
         divNode.setAttribute("class", "option");
         divNode.appendChild(h2Node);
         optionsContainer.appendChild(divNode);
     }
-    let timeRemaining = scene.choosingTime;
-    countdown.innerHTML = String(timeRemaining);
-    const interval = setInterval(() => {
-        timeRemaining--;
+    optionsScrollLeft.hidden = optionsScrollRight.hidden = !checkOverflow(optionsContainer);
+    if (scene.choosingTime == -1) {
+        countdown.innerHTML = "";
+    } else {
+        let timeRemaining = scene.choosingTime;
         countdown.innerHTML = String(timeRemaining);
-        if (timeRemaining == 0) {
-            controlContainer.setAttribute("hidden", "");
-            callback(scene.options[scene.defaultOption].jumpToId);
-        }
-    }, 1000);
+        interval = setInterval(() => {
+            timeRemaining--;
+            countdown.innerHTML = String(timeRemaining);
+            if (timeRemaining == 0) {
+                clearInterval(interval);
+                controlContainer.hidden = true;
+                callback(scene.options[scene.defaultOption].jumpToId);
+            }
+        }, 1000);
+    }
 }
 
-displayOptions({
-    video: "./res/video2.mp4",
-    options: [
-        {
-            text: "Option 1",
-            jumpToId: "option1"
-        },
-        {
-            text: "Option 2",
-            jumpToId: "option2"
-        }
-    ],
-    defaultOption: 0,
-    choosingTime: 5
-}, (jumpToId) => {
-    alert(jumpToId);
-});
+displayMainMenu();
