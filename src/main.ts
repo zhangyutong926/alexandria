@@ -23,6 +23,9 @@ ipcMain.on("get-game-config", (event: any, args: any) => {
         gameLanguage: settings.get("gameplay.language", "english") as string
     };
 });
+ipcMain.on("quit", () => {
+    app.quit();
+});
 
 console.log("Settings file path: " + settings.file().trim());
 
@@ -33,6 +36,7 @@ app.on("ready", () => {
         height: screenResolution.height,
         useContentSize: true
     });
+    playerWindow.setMenu(null);
     playerWindow.setResizable(false);
     playerWindow.loadFile(path.join(__dirname, "../player.html"));
     playerWindow.on("closed", () => {

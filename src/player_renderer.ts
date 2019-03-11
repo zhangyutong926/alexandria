@@ -38,6 +38,7 @@ for (const key in obj.gameContent) {
         choosingTime: obj.gameContent[key].choosingTime
     }
 }
+let currentSceneId: string;
 
 let inMainMenu: boolean;
 window.onkeyup = (e: KeyboardEvent) => {
@@ -59,6 +60,7 @@ window.onkeyup = (e: KeyboardEvent) => {
     }
 };
 
+const title = document.getElementById("title");
 const videoPlayer = document.getElementById("video_player") as HTMLVideoElement;
 const imageDisplay = document.getElementById("image_display") as HTMLImageElement;
 const controlContainer = document.getElementById("control_container");
@@ -67,14 +69,31 @@ const countdown = document.getElementById("countdown");
 const optionsScrollLeft = document.getElementById("options_scroll_left");
 const optionsScrollRight = document.getElementById("options_scroll_right");
 const pressEnter = document.getElementById("press_enter");
+const showMenu = document.getElementById("show_menu");
+const skipScene = document.getElementById("skip_scene");
+const leftTopControl = document.getElementById("left_top_control");
+const rightTopControl = document.getElementById("right_top_control");
+
+title.innerHTML = gameName;
+
 optionsScrollLeft.onclick = () => {
     optionsContainer.scrollLeft -= 50;
 };
 optionsScrollRight.onclick = () => {
     optionsContainer.scrollLeft += 50;
 };
+showMenu.onclick = () => {
+    displayMainMenu();
+};
+skipScene.onclick = () => {
+    displayScene(currentSceneId, -1);
+};
 
+let played: boolean = false;
 function displayMainMenu() {
+    if (played) {
+        playerWindow.reload();
+    }
     inMainMenu = true;
     videoPlayer.pause();
     videoPlayer.hidden = true;
@@ -82,28 +101,43 @@ function displayMainMenu() {
     imageDisplay.hidden = false;
     imageDisplay.src = "./res/" + homePageImage;
     pressEnter.hidden = false;
+    leftTopControl.hidden = true;
+    rightTopControl.hidden = true;
 }
 
+let chosen: boolean = false;
+let next: string;
 function displayScene(sceneId: string, time: number = 0) {
+    played = true;
     inMainMenu = false;
     pressEnter.hidden = true;
     controlContainer.hidden = true;
     imageDisplay.hidden = true;
     videoPlayer.hidden = false;
+    leftTopControl.hidden = false;
+    rightTopControl.hidden = false;
 
+    if (sceneId == "") {
+        displayMainMenu();
+        return;
+    }
+    currentSceneId = sceneId;
     const scene = gameContent[sceneId];
     console.log(sceneId);
     videoPlayer.src = "./res/" + scene.video;
     videoPlayer.currentTime = time;
-    let next: string;
-    let chosen: boolean = false;
+    if (time != -1) {
+        chosen = false;
+    }
     const callback = (jumpToId: string) => {
-        console.log(videoPlayer.ended);
-        if (videoPlayer.ended) {
-            if (next != "") {
+        console.log(videoPlayer.paused);
+        if (videoPlayer.paused) {
+            if (next != "" && jumpToId != "") {
                 displayScene(jumpToId);
+                return;
             } else {
                 displayMainMenu();
+                return;
             }
         } else {
             next = jumpToId;
@@ -115,25 +149,40 @@ function displayScene(sceneId: string, time: number = 0) {
     } else {
         let displayingOptions = false;
         videoPlayer.ontimeupdate = () => {
-            console.log(videoPlayer.currentTime + videoPlayer.duration - scene.choosingTime);
-            if (!displayingOptions && videoPlayer.currentTime >= videoPlayer.duration - scene.choosingTime) {
-                displayOptions(scene, callback);
-                displayingOptions = true;
+            if (!inMainMenu) {
+                console.log(videoPlayer.currentTime + videoPlayer.duration - scene.choosingTime);
+                if (!displayingOptions && videoPlayer.currentTime >= videoPlayer.duration - scene.choosingTime) {
+                    displayOptions(scene, callback);
+                    displayingOptions = true;
+                }
+            } else {
+                videoPlayer.pause();
             }
         };
     }
     videoPlayer.onloadedmetadata = () => {
         console.log(time + " " + videoPlayer.duration);
-        if (time < videoPlayer.duration) {
+        if (time == -1 && !chosen) {
+            videoPlayer.currentTime = videoPlayer.duration;
+        } else if (time == -1 && chosen) {
+            displayScene(next);
+            return;
+        }
+        if (time < videoPlayer.duration && time != -1) {
             videoPlayer.play();
+        } else if (time == -1 && scene.choosingTime != -1) {
+            displayScene(scene.options[scene.defaultOption].jumpToId);
+            return;
         }
     };
     videoPlayer.onended = () => {
         if (chosen) {
             if (next != "") {
                 displayScene(next);
+                return;
             } else {
                 displayMainMenu();
+                return;
             }
         }
     };

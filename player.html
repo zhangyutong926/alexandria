@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Alexandria Player</title>
+    <title id="title">Alexandria Player</title>
     <style>
         body {
             overflow-x: hidden !important;
@@ -47,9 +47,18 @@
 </head>
 
 <body>
-
     <div style="top: 0; left: 0; width: 100%; height: 100%">
-        <div>
+        <div id="left_top_control"
+            style="position: absolute; padding: 10px; margin: 10px; top: 0; left: 0; z-index: 10; background-color: rgba(0, 0, 0, 0.5);"
+            hidden>
+            <img id="skip_scene" src="./res/skip.png" style="width: 50px; height: auto; cursor: pointer;">
+        </div>
+        <div id="right_top_control"
+            style="position: absolute; padding: 10px; margin: 10px; top: 0; right: 0; z-index: 10; background-color: rgba(0, 0, 0, 0.5);"
+            hidden>
+            <img id="show_menu" src="./res/menu.png" style="width: 50px; height: auto; cursor: pointer;">
+        </div>
+        <div style="z-index: 1">
             <img id="image_display" style="top: 0; left: 0; width: 100%; height: 100%" hidden>
             <video id="video_player" style="top: 0; left: 0; width: 100%; height: 100%"></video>
         </div>
@@ -65,13 +74,10 @@
             </div>
             <div id="options_container" class="options-container"></div>
         </div>
-        <center>
-            <div style="position: absolute; bottom: 50px;"><h1 id="press_enter">Please Enter to start the game.</h1></div>
-        </center>
+        <div style="position: absolute; bottom: 50px; width: 100%; text-align: center;">
+            <h1 id="press_enter">Press Enter to start the game.</h1>
+        </div>
     </div>
-
-
-
     <script>
         // You can also require other files to run in this process
         require('./dist/player_renderer.js')
