@@ -2,7 +2,10 @@
     "gameName": "Alexandria",
     "homePageImage": "homePage.jpg",
     "enableSaving": true,
-    "entranceId": "scene1",
+    "entrances": [
+        { "text": "Starting 1", "sceneId": "scene1" },
+        { "text": "Starting 2", "sceneId": "scene2" }
+    ],
     "gameContent": {
         "scene1": {
             "video": "video1.mp4",

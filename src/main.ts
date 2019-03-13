@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import * as path from "path";
 import settings = require("electron-settings");
+import { EventEmitter } from "events";
 
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
 
@@ -12,6 +13,7 @@ const screenResolution = {
 const frame = settings.get("graphics.frame", false) as boolean;
 
 let playerWindow: Electron.BrowserWindow;
+let episodesWindow: Electron.BrowserWindow;
 
 ipcMain.on("log", (event: any, args: any) => {
     console.log(args);
@@ -25,6 +27,21 @@ ipcMain.on("get-game-config", (event: any, args: any) => {
 });
 ipcMain.on("quit", () => {
     app.quit();
+});
+ipcMain.on("open-episodes", (event: any, args: any) => {
+
+});
+ipcMain.on("close-episodes", () => {
+
+});
+ipcMain.on("open-savings", () => {
+
+});
+ipcMain.on("close-savings", () => {
+
+});
+ipcMain.on("start-game", (event: any, args: any) => {
+    playerWindow.webContents.send("start-game", args);
 });
 
 console.log("Settings file path: " + settings.file().trim());

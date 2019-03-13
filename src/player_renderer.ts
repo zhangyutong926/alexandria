@@ -1,4 +1,4 @@
-import { ipcRenderer, remote, Menu, MenuItem } from "electron";
+import { ipcRenderer, remote } from "electron";
 import * as path from "path";
 import fs = require('fs');
 
@@ -13,10 +13,13 @@ let obj = JSON.parse(fs.readFileSync(gamedataPath, "utf8")) as any;
 const gameName: string = obj.gameName;
 const homePageImage: string = obj.homePageImage;
 const enableSaving: boolean = obj.enableSaving;
-const entranceId: string = obj.entranceId;
 class Option {
     text: string;
     jumpToId: string;
+}
+class Entrance {
+    text: string;
+    sceneId: string;
 }
 class Scene {
     video: string;
@@ -24,6 +27,12 @@ class Scene {
     defaultOption: number;
     choosingTime: number;
 }
+const entrances = obj.entrances.map((element: any) => {
+    return {
+        text: element.text,
+        sceneId: element.sceneId
+    };
+});
 const gameContent: { [id: string]: Scene; } = {};
 for (const key in obj.gameContent) {
     gameContent[key] = {
@@ -53,7 +62,10 @@ window.onkeyup = (e: KeyboardEvent) => {
         case "Enter":
         case "enter": {
             if (inMainMenu) {
-                displayScene(entranceId);
+                ipcRenderer.send("start-game", {
+                    sceneId: entrances[0].sceneId,
+                    time: 0
+                });
             }
             break;
         }
@@ -73,6 +85,8 @@ const showMenu = document.getElementById("show_menu");
 const skipScene = document.getElementById("skip_scene");
 const leftTopControl = document.getElementById("left_top_control");
 const rightTopControl = document.getElementById("right_top_control");
+const mainMenuControl = document.getElementById("main_menu_control");
+const openEpisodes = document.getElementById("open_episodes");
 
 title.innerHTML = gameName;
 
@@ -87,6 +101,9 @@ showMenu.onclick = () => {
 };
 skipScene.onclick = () => {
     displayScene(currentSceneId, -1);
+};
+openEpisodes.onclick = () => {
+    ipcRenderer.send("open-episodes", entrances);
 };
 
 let played: boolean = false;
@@ -103,6 +120,7 @@ function displayMainMenu() {
     pressEnter.hidden = false;
     leftTopControl.hidden = true;
     rightTopControl.hidden = true;
+    mainMenuControl.hidden = false;
 }
 
 let chosen: boolean = false;
@@ -116,6 +134,7 @@ function displayScene(sceneId: string, time: number = 0) {
     videoPlayer.hidden = false;
     leftTopControl.hidden = false;
     rightTopControl.hidden = false;
+    mainMenuControl.hidden = true;
 
     if (sceneId == "") {
         displayMainMenu();
@@ -237,3 +256,7 @@ function displayOptions(scene: Scene, callback: (jumpToId: string) => any) {
 }
 
 displayMainMenu();
+
+ipcRenderer.on("start-game", (event: any, args: any) => {
+    displayScene(args.sceneId, args.time);
+});
