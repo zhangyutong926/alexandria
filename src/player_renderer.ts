@@ -17,7 +17,7 @@ class Option {
     text: string;
     jumpToId: string;
 }
-class Entrance {
+export class Entrance {
     text: string;
     sceneId: string;
 }
@@ -87,6 +87,7 @@ const leftTopControl = document.getElementById("left_top_control");
 const rightTopControl = document.getElementById("right_top_control");
 const mainMenuControl = document.getElementById("main_menu_control");
 const openEpisodes = document.getElementById("open_episodes");
+const quitGame = document.getElementById("quit_game");
 
 title.innerHTML = gameName;
 
@@ -104,6 +105,9 @@ skipScene.onclick = () => {
 };
 openEpisodes.onclick = () => {
     ipcRenderer.send("open-episodes", entrances);
+};
+quitGame.onclick = () => {
+    ipcRenderer.send("quit-game");
 };
 
 let played: boolean = false;

@@ -23,7 +23,7 @@
                 { "text": "Option 2-2", "jumpToId": "scene3" }
             ],
             "defaultOption": 0,
-            "choosingTime": 10
+            "choosingTime": -1
         },
         "scene3": {
             "video": "video3.mp4",
